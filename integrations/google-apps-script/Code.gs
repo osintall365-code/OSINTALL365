@@ -9,14 +9,17 @@
  * client secrets in the GitHub repository or website JavaScript.
  */
 
-const DESTINATION_EMAIL = 'osintall365@gmail.com';
+// Eleanor is the operations/intake routing identity. Gmail plus-addressing
+// delivers this alias to the OSINTALL365@gmail.com inbox.
+const DESTINATION_EMAIL = 'osintall365+eleanor@gmail.com';
 const MAX_FIELD_LENGTH = 4000;
 
 function doGet() {
   return ContentService
     .createTextOutput(JSON.stringify({
       service: 'OSINTALL365 Gmail intake bridge',
-      status: 'online'
+      status: 'online',
+      route: 'Eleanor / Operations / Lead Triage'
     }))
     .setMimeType(ContentService.MimeType.JSON);
 }
@@ -46,6 +49,9 @@ function doPost(e) {
     const body = [
       'OSINTALL365 NEW CONSULTATION',
       '',
+      'ROUTING: Eleanor — Operations / Lead Triage',
+      `Agent address: ${DESTINATION_EMAIL}`,
+      '',
       `Organization: ${organization}`,
       `Contact name: ${contactName || 'Not provided'}`,
       `Contact email: ${contactEmail}`,
@@ -71,10 +77,10 @@ function doPost(e) {
       subject: subject,
       body: body,
       replyTo: contactEmail,
-      name: 'OSINTALL365 Intake'
+      name: 'OSINTALL365 — Eleanor'
     });
 
-    return response_({ ok: true, status: 'received' });
+    return response_({ ok: true, status: 'received', route: 'eleanor' });
   } catch (err) {
     console.error(err);
     return response_({
