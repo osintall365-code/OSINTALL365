@@ -2,14 +2,19 @@
 
 ## Case control
 - Case ID: OSINT-YYYY-####
-- Lead status: NEW / NEEDS CLARIFICATION / OWNER APPROVAL REQUIRED / APPROVED / PAYMENT PENDING / PAID / IN PROGRESS / QUALITY REVIEW / DELIVERED / CLOSED / DECLINED
+- Lead status: NEW / OWNER REVIEW / OWNER CALL REQUIRED / NEEDS CLARIFICATION / OWNER APPROVAL REQUIRED / APPROVED / PAYMENT PENDING / PAID / IN PROGRESS / QUALITY REVIEW / DELIVERED / CLOSED / DECLINED
 - Date received:
 - Assigned workflow:
+- Owner notification sent: YES / NO
 
 ## Customer
 - Organization:
 - Contact name:
 - Contact email:
+- Customer reviewed by owner: YES / NO / PENDING
+- Owner/customer conversation completed: YES / NO / PENDING
+- Conversation date:
+- Owner notes:
 
 ## Request
 - Service category: Physical Security / Employee Safety / Digital Exposure / OSINT / Internal Investigation / Monitoring / Other
@@ -37,13 +42,16 @@
 - Payment terms:
 - Risks / limitations:
 
-## Owner approval gate
+## Mandatory owner gate
 - Human approval required: YES
-- Approved: YES / NO / PENDING
+- Customer personally reviewed by owner: YES / NO / PENDING
+- Customer personally spoken with by owner: YES / NO / PENDING
+- Engagement approved: YES / NO / PENDING
 - Approval date:
 - Approved scope/version:
 - Approved price/terms:
 - Approval notes:
+- **No work may begin unless customer review = YES, owner conversation = YES, and engagement approved = YES.**
 
 ## Payment gate
 - Payment required before work: YES / NO
@@ -80,6 +88,16 @@
   - Owner approval: YES / NO / PENDING
   - Approval date:
 - No spending may occur from general permission, silence, prior approval, or expected future revenue. Each outgoing transaction requires its own explicit approval.
+
+## Future business-domain email architecture
+- Owner destination: `osintall365@gmail.com`
+- Eleanor: `eleanor@[approved business domain]`
+- Research: `research@[approved business domain]`
+- Support: `support@[approved business domain]`
+- Marketing: `marketing@[approved business domain]`
+- Finance: `finance@[approved business domain]`
+- Security: `security@[approved business domain]`
+- Owner forwarding required for every work-order request: YES
 
 ## Data minimization
 Do not collect or retain passwords, payment-card numbers, Social Security numbers, authentication codes, unnecessary personal data, classified information, or restricted law-enforcement information. Do not perform unauthorized access, credential theft, stalking, harassment, doxxing, illegal surveillance, or access to restricted systems.
