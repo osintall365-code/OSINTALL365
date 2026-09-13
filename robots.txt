@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /workflows.html
+Sitemap: https://osintall365-code.github.io/OSINTALL365/sitemap.xml
