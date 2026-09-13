@@ -1,17 +1,16 @@
 /**
  * OSINTALL365 Gmail intake bridge.
  *
- * Deploy this script as a Google Apps Script Web App that executes as the
- * deploying account. It sends website intake submissions to the OSINTALL365
- * Gmail mailbox using Google's built-in Gmail service.
+ * Google Apps Script runs this under the Google account that authorizes
+ * the deployment. No Gmail password, OAuth token, or API secret is stored
+ * in this repository.
  *
- * Security note: Do not put Gmail credentials, OAuth tokens, API keys, or
- * client secrets in the GitHub repository or website JavaScript.
+ * Eleanor is represented by the OSINTALL365 Gmail routing alias:
+ * osintall365+eleanor@gmail.com
  */
 
-// Eleanor is the operations/intake routing identity. Gmail plus-addressing
-// delivers this alias to the OSINTALL365@gmail.com inbox.
 const DESTINATION_EMAIL = 'osintall365+eleanor@gmail.com';
+const OWNER_NOTIFICATION_EMAIL = 'osintall365@gmail.com';
 const MAX_FIELD_LENGTH = 4000;
 
 function doGet() {
@@ -31,6 +30,7 @@ function doPost(e) {
     const organization = clean_(p.organization);
     const contactName = clean_(p.contactName);
     const contactEmail = clean_(p.contactEmail);
+    const contactPhone = clean_(p.contactPhone);
     const service = clean_(p.service);
     const concern = clean_(p.concern);
     const outcome = clean_(p.outcome);
@@ -45,16 +45,18 @@ function doPost(e) {
       });
     }
 
-    const subject = `NEW LEAD | ${service} | ${organization}`;
-    const body = [
-      'OSINTALL365 NEW CONSULTATION',
+    const received = new Date().toISOString();
+    const subject = `NEW CLIENT | ${service} | ${organization}`;
+
+    const eleanorBody = [
+      'OSINTALL365 NEW CLIENT INTAKE',
       '',
       'ROUTING: Eleanor — Operations / Lead Triage',
-      `Agent address: ${DESTINATION_EMAIL}`,
       '',
       `Organization: ${organization}`,
       `Contact name: ${contactName || 'Not provided'}`,
       `Contact email: ${contactEmail}`,
+      `Contact phone: ${contactPhone || 'Not provided'}`,
       `Service: ${service}`,
       `Concern: ${concern}`,
       `Desired outcome: ${outcome || 'Not provided'}`,
@@ -63,29 +65,59 @@ function doPost(e) {
       `Authorization confirmed: ${authorization}`,
       `Sensitive-data handling acknowledged: ${sensitiveData || 'Not provided'}`,
       '',
-      'PAYMENT STATUS: No payment requested at intake.',
-      'Payment destination for approved engagements: https://www.paypal.me/OSINTALL365',
+      'PAYMENT DESTINATION:',
+      'https://www.paypal.me/OSINTALL365',
       '',
-      'CONTROL: No engagement approval, scope expansion, pricing decision, or outgoing expenditure is authorized by this submission.',
-      'All outgoing business spending requires a separate owner approval for the specific transaction.',
+      'CONTROL:',
+      'Eleanor may handle authorized customer intake and work within the authorized scope.',
+      'No outgoing business spending is authorized by this intake.',
+      'Every outgoing transaction still requires separate owner approval.',
       '',
-      `Received: ${new Date().toISOString()}`
+      `Received: ${received}`
+    ].join('\n');
+
+    const ownerBody = [
+      'OSINTALL365 NEW CLIENT NOTIFICATION',
+      '',
+      `Organization: ${organization}`,
+      `Contact name: ${contactName || 'Not provided'}`,
+      `Contact email: ${contactEmail}`,
+      `Contact phone: ${contactPhone || 'Not provided'}`,
+      `Service: ${service}`,
+      `Urgency: ${urgency || 'Not provided'}`,
+      '',
+      'Eleanor has received the client intake.',
+      'Owner notification only; no spending authorization is created by this message.',
+      '',
+      `Received: ${received}`
     ].join('\n');
 
     GmailApp.sendEmail({
       to: DESTINATION_EMAIL,
       subject: subject,
-      body: body,
+      body: eleanorBody,
       replyTo: contactEmail,
       name: 'OSINTALL365 — Eleanor'
     });
 
-    return response_({ ok: true, status: 'received', route: 'eleanor' });
+    GmailApp.sendEmail({
+      to: OWNER_NOTIFICATION_EMAIL,
+      subject: subject,
+      body: ownerBody,
+      replyTo: contactEmail,
+      name: 'OSINTALL365 — Client Notification'
+    });
+
+    return response_({
+      ok: true,
+      status: 'received',
+      route: 'eleanor'
+    });
   } catch (err) {
     console.error(err);
     return response_({
       ok: false,
-      error: 'The intake could not be delivered. Please use the email fallback.'
+      error: 'The intake could not be delivered.'
     });
   }
 }
